@@ -10,6 +10,7 @@ export default function App() {
   const [imageBlob, setImageBlob] = useState<Blob | null>(null);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [countdown, setCountdown] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [lastQuery, setLastQuery] = useState("");
   const [queryCount, setQueryCount] = useState(0);
@@ -22,8 +23,14 @@ export default function App() {
   }, []);
 
   const handleCapture = useCallback(async () => {
-    setIsLoading(true);
     setError(null);
+    // Count down so the user can switch to the window they want to capture
+    for (let i = 3; i > 0; i--) {
+      setCountdown(i);
+      await new Promise((r) => setTimeout(r, 1000));
+    }
+    setCountdown(0);
+    setIsLoading(true);
     try {
       const url = await captureScreenshot();
       const blob = await dataUrlToBlob(url);
@@ -150,6 +157,7 @@ export default function App() {
               onCapture={handleCapture}
               onFileSelect={handleFileSelect}
               isLoading={isLoading}
+              countdown={countdown}
               hasImage={!!imageUrl}
             />
           </div>

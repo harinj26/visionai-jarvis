@@ -15,10 +15,11 @@ interface Props {
   onCapture: () => void;
   onFileSelect: (file: File) => void;
   isLoading: boolean;
+  countdown: number;
   hasImage: boolean;
 }
 
-export function QueryBar({ onSubmit, onCapture, onFileSelect, isLoading, hasImage }: Props) {
+export function QueryBar({ onSubmit, onCapture, onFileSelect, isLoading, countdown, hasImage }: Props) {
   const [query, setQuery] = useState("");
   const [mode, setMode] = useState<Mode>("ground");
   const [showPresets, setShowPresets] = useState(false);
@@ -75,14 +76,22 @@ export function QueryBar({ onSubmit, onCapture, onFileSelect, isLoading, hasImag
         {/* Screenshot capture */}
         <button
           onClick={onCapture}
-          disabled={isLoading}
-          title="Capture desktop screenshot"
-          className="flex-shrink-0 w-9 h-9 flex items-center justify-center rounded bg-jarvis-border hover:bg-jarvis-neon/20 hover:text-jarvis-neon text-jarvis-muted transition-colors disabled:opacity-40"
+          disabled={isLoading || countdown > 0}
+          title="Capture desktop — 3s countdown so you can switch windows"
+          className={`flex-shrink-0 w-9 h-9 flex items-center justify-center rounded transition-colors disabled:cursor-not-allowed
+            ${countdown > 0
+              ? "bg-jarvis-neon/30 text-jarvis-neon text-sm font-bold"
+              : "bg-jarvis-border hover:bg-jarvis-neon/20 hover:text-jarvis-neon text-jarvis-muted disabled:opacity-40"
+            }`}
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-            <circle cx="12" cy="13" r="4" />
-          </svg>
+          {countdown > 0 ? (
+            countdown
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+              <circle cx="12" cy="13" r="4" />
+            </svg>
+          )}
         </button>
 
         {/* File upload */}
